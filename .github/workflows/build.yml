@@ -14,32 +14,12 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set up project files & build workspace
-        run: |
-          echo "Đang chuẩn bị biên dịch dự án Shinn H4k..."
-          mkdir -p Payload
-          mkdir -p ShinnH4k.xcodeproj
-          
-          # Tạo project cấu hình tối thiểu để biên dịch các file Swift trực tiếp
-          cat << 'EOF' > ShinnH4k.xcodeproj/project.pbxproj
-          // !$*OBJC*$!
-          {
-              archiveVersion = 1;
-              classes = {
-              };
-              objectVersion = 56;
-              objects = {
-              };
-              rootObject = 0867D69FEFE40983000C9392 /* Project object */;
-          }
-          EOF
-
       - name: Compile Swift files into App Binary
         run: |
           echo "Đang biên dịch mã nguồn SwiftUI..."
           mkdir -p Payload/ShinnH4k.app
           
-          # Biên dịch các tệp theo đúng cấu trúc mã nguồn
+          # Biên dịch toàn bộ các file Swift theo đúng thứ tự thành tệp thực thi chính
           swiftc -parse-as-library \
             AppTheme.swift \
             StoreModels.swift \
@@ -55,7 +35,7 @@ jobs:
             -target arm64-apple-ios15.0 \
             -framework SwiftUI -framework Foundation -framework UIKit
 
-          # Tạo file Info.plist với thông tin yêu cầu
+          # Tạo file cấu hình Info.plist với thông tin chuẩn yêu cầu
           cat << 'EOF' > Payload/ShinnH4k.app/Info.plist
           <?xml version="1.0" encoding="UTF-8"?>
           <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
