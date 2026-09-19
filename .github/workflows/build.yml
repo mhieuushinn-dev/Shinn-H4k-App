@@ -12,13 +12,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Extract source
-        run: |
-          unzip -o "ShinnH4k_v5_BlackWhite.zip" -d extracted
-
       - name: Build App
         run: |
-          cd extracted
           PROJECT_FILE=$(find . -name "*.xcodeproj" -maxdepth 2 | head -n 1)
           echo "Found project: $PROJECT_FILE"
           
@@ -34,7 +29,6 @@ jobs:
 
       - name: Archive and Prepare IPA
         run: |
-          cd extracted
           APP_PATH=$(find build/Build/Products/Release-iphoneos -name "*.app" -maxdepth 1)
           echo "Found app: $APP_PATH"
           mkdir -p Payload
@@ -45,4 +39,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ShinnH4k-Signed-IPA
-          path: extracted/ShinnH4k.ipa
+          path: ShinnH4k.ipa
