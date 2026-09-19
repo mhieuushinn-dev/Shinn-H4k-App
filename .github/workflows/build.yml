@@ -15,33 +15,26 @@ jobs:
 
       - name: Compile and Package Real IPA
         run: |
-          echo "Đang tiến hành biên dịch mã nguồn Swift thành ứng dụng thực tế..."
+          echo "Đang chuẩn bị thư mục Payload cho ứng dụng..."
           mkdir -p build/Payload/ShinnH4k.app
 
-          # Biên dịch toàn bộ các file Swift thành file thực thi nhị phân chuẩn iOS (arm64)
+          echo "Đang tiến hành biên dịch toàn bộ mã nguồn Swift thành ứng dụng thực tế..."
+          # Lệnh gom và biên dịch tất cả các tệp .swift trong thư mục hiện tại thành file chạy chính của ứng dụng
           swiftc -parse-as-library \
-            AppTheme.swift \
-            StoreModels.swift \
-            GlowEffects.swift \
-            HeaderView.swift \
-            HeroBannerView.swift \
-            SectionHeaderView.swift \
-            PackageRowView.swift \
-            ShinnStoreView.swift \
-            ContentView.swift \
+            *.swift \
             -o build/Payload/ShinnH4k.app/ShinnH4k \
             -sdk $(xcrun --sdk iphoneos --show-sdk-path) \
             -target arm64-apple-ios15.0 \
             -framework SwiftUI -framework Foundation -framework UIKit
 
-          # Tạo file Info.plist cấu hình đầy đủ Bundle ID và thông tin ứng dụng
+          echo "Đang tạo tệp Info.plist cấu hình hệ thống..."
           cat << 'EOF' > build/Payload/ShinnH4k.app/Info.plist
           <?xml version="1.0" encoding="UTF-8"?>
           <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
           <plist version="1.0">
           <dict>
               <key>CFBundleIdentifier</key>
-              <string>com.apple.mobile.MobileHouseArrest</string>
+              <string>com.shinn.h4kstore</string>
               <key>CFBundleName</key>
               <string>Shinn H4k</string>
               <key>CFBundleDisplayName</key>
@@ -66,10 +59,10 @@ jobs:
           </plist>
           EOF
 
-          # Nén thành tệp IPA chuẩn
+          echo "Đang nén thư mục thành file IPA chuẩn..."
           cd build
           zip -r ShinnH4k-v2.0.ipa Payload
-          echo "Đã đóng gói IPA thành công!"
+          echo "Đóng gói tệp IPA hoàn tất!"
 
       - name: Upload IPA Artifact
         uses: actions/upload-artifact@v4
