@@ -1,28 +1,16 @@
-name: Build iOS IPA
+- name: Extract source
+  run: |
+    unzip -o "Shinn H4k.zip" -d extracted
 
-on:
-  workflow_dispatch:
-
-jobs:
-  build:
-    runs-on: macos-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Select Xcode
-        run: |
-          sudo xcode-select -s /Applications/Xcode.app
-
-      - name: Build
-        run: |
-          xcodebuild \
-            -project ThreeOneOSFive.xcodeproj \
-            -scheme ThreeOneOSFive \
-            -sdk iphoneos \
-            -configuration Release \
-            -derivedDataPath build \
-            CODE_SIGNING_ALLOWED=NO \
-            CODE_SIGNING_REQUIRED=NO \
-            build
+- name: Build
+  working-directory: extracted/3105-2.0
+  run: |
+    xcodebuild \
+      -project ThreeOneOSFive.xcodeproj \
+      -scheme ThreeOneOSFive \
+      -sdk iphoneos \
+      -configuration Release \
+      -derivedDataPath build \
+      CODE_SIGNING_ALLOWED=NO \
+      CODE_SIGNING_REQUIRED=NO \
+      build
