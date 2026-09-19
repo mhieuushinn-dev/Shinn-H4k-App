@@ -17,5 +17,14 @@ jobs:
       - name: Build and Package IPA
         run: |
           echo "Đang tiến hành build ứng dụng..."
-          # Đảm bảo các lệnh build xcodebuild của bạn nằm ở đây
-          # Ví dụ: xcodebuild -project YourProject.xcodeproj -scheme "Shinn H4k" ...
+          # Đặt các lệnh xcodebuild của bạn ở đây để tạo tệp .ipa
+          # Ví dụ tạo thư mục chứa ipa mẫu để test:
+          mkdir -p build
+          # (Thay thế dòng dưới bằng lệnh xcodebuild thực tế xuất file .ipa của bạn)
+          echo "Mock IPA File" > build/ShinnH4K.ipa
+
+      - name: Upload IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ShinnH4K-IPA
+          path: build/*.ipa
