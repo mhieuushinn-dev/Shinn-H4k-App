@@ -49,6 +49,7 @@ struct ContentView: View {
                 compactLayout
             }
         }
+        .preferredColorScheme(.forceDark) // Ép toàn bộ giao diện và pop-up chạy màu tối
         .tint(AppTheme.accent)
         .imageScale(.small)
         .onChange(of: patchDraftCoordinator.request?.id) { requestID in
@@ -63,8 +64,14 @@ struct ContentView: View {
         .onAppear {
             tabNavigation.reconcileSelection(with: featureVisibility)
         }
-        .sheet(isPresented: $showSettings) { SettingsView() }
-        .sheet(isPresented: $showLogs) { LogView() }
+        .sheet(isPresented: $showSettings) { 
+            SettingsView()
+                .presentationBackground(.black) // Loại bỏ nền xám mờ, đổi thành đen tuyền
+        }
+        .sheet(isPresented: $showLogs) { 
+            LogView()
+                .presentationBackground(.black) // Loại bỏ nền xám mờ, đổi thành đen tuyền
+        }
         .patchStorePresentation(patchStore)
         .repositoryStorePresentation(repositoryStore, patchStore: patchStore)
     }
