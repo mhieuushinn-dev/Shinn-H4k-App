@@ -1,16 +1,49 @@
-- name: Extract source
-  run: |
-    unzip -o "Shinn H4k.zip" -d extracted
+name: Build iOS IPA
 
-- name: Build
-  working-directory: extracted/3105-2.0
-  run: |
-    xcodebuild \
-      -project ThreeOneOSFive.xcodeproj \
-      -scheme ThreeOneOSFive \
-      -sdk iphoneos \
-      -configuration Release \
-      -derivedDataPath build \
-      CODE_SIGNING_ALLOWED=NO \
-      CODE_SIGNING_REQUIRED=NO \
-      build
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Extract source
+        run: |
+          unzip -o "ShinnH4k_v5_BlackWhite.zip" -d extracted
+
+      - name: Build App
+        run: |
+          cd extracted
+          # Tự động tìm đường dẫn tệp .xcodeproj bên trong thư mục giải nén
+          PROJECT_FILE=$(find . -name "*.xcodeproj" -maxdepth 2 | head -n 1)
+          echo "Found project: $PROJECT_FILE"
+          
+          xcodebuild \
+            -project "$PROJECT_FILE" \
+            -scheme "ThreeOneOSFive" \
+            -sdk iphoneos \
+            -configuration Release \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            build
+
+      - name: Archive and Prepare IPA
+        run: |
+          cd extracted
+          APP_PATH=$(find build/Build/Products/Release-iphoneos -name "*.app" -maxdepth 1)
+          echo "Found app: $APP_PATH"
+          mkdir -p Payload
+          cp -r "$APP_PATH" Payload/
+          zip -r ShinnH4k.ipa Payload
+
+      - name: Upload IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ShinnH4k-Signed-IPA
+          path: extracted/ShinnH4k.ipa
