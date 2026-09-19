@@ -15,11 +15,13 @@ jobs:
 
       - name: Compile and Package Real IPA
         run: |
+          echo "Đang kiểm tra danh sách các file Swift trong kho lưu trữ..."
+          ls -la *.swift
+
           echo "Đang chuẩn bị thư mục cấu trúc Payload..."
           mkdir -p build/Payload/ShinnH4k.app
 
           echo "Đang tiến hành biên dịch toàn bộ các tệp mã nguồn Swift..."
-          # Lệnh gom và biên dịch mọi tệp .swift hiện có trong dự án thành mã máy arm64
           swiftc -parse-as-library \
             *.swift \
             -o build/Payload/ShinnH4k.app/ShinnH4k \
