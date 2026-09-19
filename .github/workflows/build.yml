@@ -13,30 +13,63 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Build and Package IPA
+      - name: Compile and Package Real IPA
         run: |
-          echo "Dang bien dich ma nguon Swift..."
-          
-          # Tạo thư mục chứa file build
-          mkdir -p build/Payload
-          
-          # Build project trực tiếp bằng xcodebuild (hoặc chỉnh lại tên scheme nếu cần)
-          xcodebuild -scheme "ShinnStoreApp" \
-                     -sdk iphoneos \
-                     -configuration Release \
-                     archive \
-                     -archivePath build/ShinnStore.xcarchive \
-                     CODE_SIGN_IDENTITY="" \
-                     CODE_SIGNING_REQUIRED=NO \
-                     CODE_SIGNING_ALLOWED=NO || echo "Bo qua buoc xcodebuild neu dung truc tiep file swift"
-          
-          # Đóng gói giả lập cấu trúc app nếu dùng các file swift riêng lẻ
-          # (Hệ thống sẽ tự tạo file ipa thành phẩm để tải về)
+          echo "Đang tiến hành biên dịch mã nguồn Swift thành ứng dụng thực tế..."
+          mkdir -p build/Payload/ShinnH4k.app
+
+          # Biên dịch toàn bộ các file Swift thành file thực thi nhị phân chuẩn iOS (arm64)
+          swiftc -parse-as-library \
+            AppTheme.swift \
+            StoreModels.swift \
+            GlowEffects.swift \
+            HeaderView.swift \
+            HeroBannerView.swift \
+            SectionHeaderView.swift \
+            PackageRowView.swift \
+            ShinnStoreView.swift \
+            ContentView.swift \
+            -o build/Payload/ShinnH4k.app/ShinnH4k \
+            -sdk $(xcrun --sdk iphoneos --show-sdk-path) \
+            -target arm64-apple-ios15.0 \
+            -framework SwiftUI -framework Foundation -framework UIKit
+
+          # Tạo file Info.plist cấu hình đầy đủ Bundle ID và thông tin ứng dụng
+          cat << 'EOF' > build/Payload/ShinnH4k.app/Info.plist
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+              <key>CFBundleIdentifier</key>
+              <string>com.apple.mobile.MobileHouseArrest</string>
+              <key>CFBundleName</key>
+              <string>Shinn H4k</string>
+              <key>CFBundleDisplayName</key>
+              <string>Shinn H4k</string>
+              <key>CFBundleShortVersionString</key>
+              <string>2.0</string>
+              <key>CFBundleVersion</key>
+              <string>2026.2.0</string>
+              <key>MinimumOSVersion</key>
+              <string>15.0</string>
+              <key>UIDeviceFamily</key>
+              <array>
+                  <integer>1</integer>
+              </array>
+              <key>UIRequiredDeviceCapabilities</key>
+              <array>
+                  <string>arm64</string>
+              </array>
+              <key>UILaunchScreen</key>
+              <dict/>
+          </dict>
+          </plist>
+          EOF
+
+          # Nén thành tệp IPA chuẩn
           cd build
-          mkdir -p Payload/ShinnH4k.app
-          echo "Mock App Binary" > Payload/ShinnH4k.app/ShinnH4k
           zip -r ShinnH4k-v2.0.ipa Payload
-          echo "Build IPA thanh cong!"
+          echo "Đã đóng gói IPA thành công!"
 
       - name: Upload IPA Artifact
         uses: actions/upload-artifact@v4
