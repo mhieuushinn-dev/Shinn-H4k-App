@@ -14,13 +14,8 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set up Xcode
-        uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: '15.0'
-
       - name: Build and Package IPA
         run: |
           echo "Đang tiến hành build ứng dụng..."
-          # Thêm các lệnh build xcodebuild tại đây tùy theo cấu trúc project của bạn
-          # Ví: xcodebuild -scheme "ShinnH4k" -configuration Release ...
+          # Đảm bảo các lệnh build xcodebuild của bạn nằm ở đây
+          # Ví dụ: xcodebuild -project YourProject.xcodeproj -scheme "Shinn H4k" ...
