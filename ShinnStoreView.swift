@@ -5,7 +5,7 @@ struct ShinnStoreView: View {
         StoreCategory(
             name: "Free Fire",
             iconSystemName: "flame.fill",
-            iconAssetName: nil,   // đổi thành "freefire_icon" khi có asset
+            iconAssetName: "FreeFireIcon",       // ← ĐỔI TÊN NÀY
             packageCount: 2,
             badgeText: "MAX",
             iconColors: [
@@ -16,7 +16,7 @@ struct ShinnStoreView: View {
         StoreCategory(
             name: "Free Fire Max",
             iconSystemName: "flame.fill",
-            iconAssetName: nil,   // đổi thành "freefiremax_icon"
+            iconAssetName: "FreeFireMaxIcon",    // ← ĐỔI TÊN NÀY
             packageCount: 2,
             badgeText: "MAX",
             iconColors: [
@@ -27,7 +27,7 @@ struct ShinnStoreView: View {
         StoreCategory(
             name: "MOD VIP",
             iconSystemName: "shield.lefthalf.filled",
-            iconAssetName: nil,   // đổi thành "modvip_icon"
+            iconAssetName: "ModVipIcon",         // ← ĐỔI TÊN NÀY
             packageCount: 9,
             badgeText: nil,
             iconColors: [
@@ -39,28 +39,17 @@ struct ShinnStoreView: View {
 
     var body: some View {
         ZStack {
-            LightStreaksBackground()
-                .ignoresSafeArea()
+            LightStreaksBackground().ignoresSafeArea()
 
             ScrollView {
                 VStack(spacing: 16) {
                     HeaderView()
-                        .padding(.top, 4)
-
                     HeroBannerView(useCustomImage: false)
-                        .padding(.top, 2)
-
-                    SectionHeaderView(
-                        title: "DANH MỤC GÓI",
-                        badgeText: "Miễn phí 100%"
-                    )
-                    .padding(.top, 4)
+                    SectionHeaderView(title: "DANH MỤC GÓI", badgeText: "Miễn phí 100%")
 
                     VStack(spacing: 12) {
                         ForEach(categories) { category in
-                            PackageRowView(category: category) {
-                                // TODO: navigate to detail
-                            }
+                            PackageRowView(category: category) {}
                         }
                     }
 
@@ -71,8 +60,4 @@ struct ShinnStoreView: View {
         }
         .preferredColorScheme(.dark)
     }
-}
-
-#Preview {
-    ShinnStoreView()
 }
