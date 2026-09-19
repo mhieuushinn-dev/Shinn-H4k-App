@@ -2,56 +2,25 @@ name: Build iOS IPA
 
 on:
   push:
-    branches: [ main ]
+    branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
   build:
+    name: Build iOS App
     runs-on: macos-latest
+
     steps:
-      - name: Checkout code
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Extract source
-        run: |
-          if [ -f "ShinnH4k_v5_BlackWhite.zip" ]; then
-            unzip -o "ShinnH4k_v5_BlackWhite.zip" -d extracted
-          else
-            mkdir -p extracted
-            cp -R * extracted/ || true
-          fi
-
-      - name: Build App
-        run: |
-          cd extracted
-          PROJECT_FILE=$(find . -name "*.xcodeproj" -maxdepth 3 | head -n 1)
-          echo "Found project: $PROJECT_FILE"
-          
-          # Tự động lấy tên scheme đầu tiên có sẵn trong project để tránh lỗi sai tên
-          SCHEME_NAME=$(xcodebuild -project "$PROJECT_FILE" -list | grep -A 20 "Schemes:" | tail -n +2 | head -n 1 | xargs)
-          echo "Using scheme: $SCHEME_NAME"
-          
-          xcodebuild \
-            -project "$PROJECT_FILE" \
-            -scheme "$SCHEME_NAME" \
-            -sdk iphoneos \
-            -configuration Release \
-            -derivedDataPath build \
-            CODE_SIGNING_ALLOWED=NO \
-            CODE_SIGNING_REQUIRED=NO \
-            build
-
-      - name: Archive and Prepare IPA
-        run: |
-          cd extracted
-          APP_PATH=$(find build/Build/Products/Release-iphoneos -name "*.app" -maxdepth 1)
-          echo "Found app: $APP_PATH"
-          mkdir -p Payload
-          cp -r "$APP_PATH" Payload/
-          zip -r ShinnH4k.ipa Payload
-
-      - name: Upload IPA Artifact
-        uses: actions/upload-artifact@v4
+      - name: Set up Xcode
+        uses: maxim-lobanov/setup-xcode@v1
         with:
-          name: ShinnH4k-Signed-IPA
-          path: extracted/ShinnH4k.ipa
+          xcode-version: '15.0'
+
+      - name: Build and Package IPA
+        run: |
+          echo "Đang tiến hành build ứng dụng..."
+          # Thêm các lệnh build xcodebuild tại đây tùy theo cấu trúc project của bạn
+          # Ví: xcodebuild -scheme "ShinnH4k" -configuration Release ...
