@@ -15,19 +15,21 @@ jobs:
 
       - name: Compile and Package Real IPA
         run: |
-          echo "Đang chuẩn bị thư mục Payload cho ứng dụng..."
+          echo "Đang chuẩn bị thư mục cấu trúc Payload..."
           mkdir -p build/Payload/ShinnH4k.app
 
-          echo "Đang tiến hành biên dịch toàn bộ mã nguồn Swift thành ứng dụng thực tế..."
-          # Lệnh gom và biên dịch tất cả các tệp .swift trong thư mục hiện tại thành file chạy chính của ứng dụng
+          echo "Đang tiến hành biên dịch toàn bộ các tệp mã nguồn Swift..."
+          # Lệnh gom và biên dịch mọi tệp .swift hiện có trong dự án thành mã máy arm64
           swiftc -parse-as-library \
             *.swift \
             -o build/Payload/ShinnH4k.app/ShinnH4k \
             -sdk $(xcrun --sdk iphoneos --show-sdk-path) \
             -target arm64-apple-ios15.0 \
-            -framework SwiftUI -framework Foundation -framework UIKit
+            -framework SwiftUI \
+            -framework Foundation \
+            -framework UIKit
 
-          echo "Đang tạo tệp Info.plist cấu hình hệ thống..."
+          echo "Đang tạo tệp Info.plist định danh ứng dụng..."
           cat << 'EOF' > build/Payload/ShinnH4k.app/Info.plist
           <?xml version="1.0" encoding="UTF-8"?>
           <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -59,10 +61,10 @@ jobs:
           </plist>
           EOF
 
-          echo "Đang nén thư mục thành file IPA chuẩn..."
+          echo "Đang nén thành tệp IPA chuẩn..."
           cd build
           zip -r ShinnH4k-v2.0.ipa Payload
-          echo "Đóng gói tệp IPA hoàn tất!"
+          echo "Biên dịch và đóng gói thành công!"
 
       - name: Upload IPA Artifact
         uses: actions/upload-artifact@v4
